@@ -1,0 +1,13 @@
+{
+  "/login/page": "app/login/page.js",
+  "/api/admin/reset/route": "app/api/admin/reset/route.js",
+  "/api/admin/matches/route": "app/api/admin/matches/route.js",
+  "/api/admin/teams/route": "app/api/admin/teams/route.js",
+  "/api/admin/daily/route": "app/api/admin/daily/route.js",
+  "/api/public/daily/route": "app/api/public/daily/route.js",
+  "/api/public/stats/route": "app/api/public/stats/route.js",
+  "/admin/matches/page": "app/admin/matches/page.js",
+  "/admin/stats/page": "app/admin/stats/page.js",
+  "/admin/daily/page": "app/admin/daily/page.js",
+  "/admin/teams/page": "app/admin/teams/page.js"
+}
