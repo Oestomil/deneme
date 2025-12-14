@@ -5,12 +5,7 @@ import type { DailyMatchesResponse } from "@/lib/types";
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
-        let dateKey = searchParams.get("dateKey");
-
-        if (!dateKey) {
-            // Default to "latest" behavior if no key provided
-            dateKey = "latest";
-        }
+        let dateKey = searchParams.get("dateKey") || "latest";
 
         // Get daily set
         let dailySet: any = null;
@@ -48,7 +43,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Fetch all matches and teams
-        const matchPromises = dailySet.matchIds.map((id) => getMatch(id));
+        const matchPromises = dailySet.matchIds.map((id: string) => getMatch(id));
         const matches = await Promise.all(matchPromises);
 
         // Build response with joined team data
