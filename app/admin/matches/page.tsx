@@ -21,6 +21,11 @@ export default function MatchesPage() {
         week: 1,
     });
 
+    // Generator state
+    const [showGenerator, setShowGenerator] = useState(false);
+    const [genWeek, setGenWeek] = useState(1);
+    const [genCount, setGenCount] = useState(5);
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -102,6 +107,26 @@ export default function MatchesPage() {
         }
     };
 
+    const handleGenerate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await fetch("/api/admin/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ week: genWeek, count: genCount }),
+            });
+            if (res.ok) {
+                alert("Matches generated!");
+                setShowGenerator(false);
+                fetchData();
+            } else {
+                alert("Failed to generate");
+            }
+        } catch (error) {
+            alert("Error generating matches");
+        }
+    };
+
     const getTeamName = (id: string) => {
         return teams.find((t) => t.id === id)?.shortName || id;
     };
@@ -138,8 +163,57 @@ export default function MatchesPage() {
                     >
                         Add Match
                     </button>
+                    <button
+                        onClick={() => setShowGenerator(true)}
+                        className="block mt-2 sm:mt-0 sm:ml-4 rounded-md bg-purple-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-purple-500"
+                    >
+                        Random Gen
+                    </button>
                 </div>
             </div>
+
+            {showGenerator && (
+                <div className="mt-4 bg-purple-50 p-6 rounded-lg shadow border border-purple-200">
+                    <h2 className="text-lg font-medium mb-4 text-purple-900">Generate Random Matches</h2>
+                    <form onSubmit={handleGenerate} className="flex gap-4 items-end">
+                        <div className="flex-1">
+                            <label className="block text-sm font-medium text-purple-900">Target Week</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={genWeek}
+                                onChange={(e) => setGenWeek(parseInt(e.target.value))}
+                                className="mt-1 block w-full rounded-md border-purple-300 shadow-sm sm:text-sm px-3 py-2 border"
+                                required
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm font-medium text-purple-900">Count</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={genCount}
+                                onChange={(e) => setGenCount(parseInt(e.target.value))}
+                                className="mt-1 block w-full rounded-md border-purple-300 shadow-sm sm:text-sm px-3 py-2 border"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500"
+                        >
+                            Generate
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setShowGenerator(false)}
+                            className="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300"
+                        >
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            )}
 
             {showForm && (
                 <div className="mt-4 bg-white p-6 rounded-lg shadow">

@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
             dailySet = await getDailySet(dateKey);
         }
 
-        // Fallback or "latest" logic
-        if (!dailySet || !dailySet.published) {
+        // If "latest" was requested, finding the most recent published set
+        if (dateKey === "latest" && (!dailySet || !dailySet.published)) {
             const allSets = await getAllDailySets();
             const publishedSets = allSets
                 .filter(s => s.published && s.dateKey.startsWith('week-'))
@@ -28,14 +28,11 @@ export async function GET(req: NextRequest) {
 
             if (publishedSets.length > 0) {
                 dailySet = publishedSets[0];
-                // Update dateKey to the actual found key so the client knows what it got
-                if (dateKey === "latest") {
-                    dateKey = dailySet.dateKey;
-                }
+                dateKey = dailySet.dateKey;
             }
         }
 
-        if (!dailySet || !dailySet.published) {
+        if (!dailySet || (!dailySet.published && process.env.NODE_ENV !== "development")) {
             return NextResponse.json(
                 { error: "No published daily set found" },
                 { status: 404 }
